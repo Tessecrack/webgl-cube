@@ -1,1 +1,1 @@
-![demo_video](https://github.com/Tessecrack/webgl-cube/webgl_cube.gif)
+![demo](https://github.com/Tessecrack/webgl-cube/blob/master/webgl_cube.gif)
