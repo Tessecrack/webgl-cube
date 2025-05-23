@@ -1,0 +1,15 @@
+{
+  "name": "task_1_cube",
+  "version": "1.0.0",
+  "description": "rotation cube scene",
+  "main": "script.js",
+  "scripts": {
+    "start": "http-server ./",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "humble_guy",
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}
