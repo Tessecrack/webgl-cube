@@ -1,4 +1,16 @@
 export const m4 = {
+    perspective: function(fieldOfViewInRadians, aspect, near, far) {
+        const f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRadians);
+        const rangeInv = 1.0 / (near - far);
+
+        return [
+            f / aspect, 0, 0, 0,
+            0, f, 0, 0,
+            0, 0, (near + far) * rangeInv, -1,
+            0, 0, near * far * rangeInv * 2, 0
+        ];
+    },
+
     projection: function(width, height, depth) {
         return [
             2 / width, 0, 0, 0,
@@ -6,6 +18,15 @@ export const m4 = {
             0, 0, 2 / depth, 0,
             -1, 1, 0, 1
         ]
+    },
+
+    makeZToWMatrix: function(fudgeFactor) {
+        return [
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, fudgeFactor,
+            0, 0, 0, 1
+        ];
     },
 
     translation: function(tx, ty, tz) {
@@ -63,26 +84,26 @@ export const m4 = {
     },
 
     translate: function(m, tx, ty, tz) {
-        return m4.multiply2(m4.translation(tx, ty, tz), m);
+        return m4.multiply(m4.translation(tx, ty, tz), m);
     },
 
     rotateX: function(m, angleInRadians) {
-        return m4.multiply2(m4.xRotation(angleInRadians), m);
+        return m4.multiply(m4.xRotation(angleInRadians), m);
     },
 
     rotateY: function(m, angleInRadians) {
-        return m4.multiply2(m4.yRotation(angleInRadians), m);
+        return m4.multiply(m4.yRotation(angleInRadians), m);
     },
 
     rotateZ: function(m, angleInRadians) {
-        return m4.multiply2(m4.zRotation(angleInRadians), m);
+        return m4.multiply(m4.zRotation(angleInRadians), m);
     },
 
     scale: function(m, sx, sy, sz) {
-        return m4.multiply2(m4.scaling(sx, sy, sz), m);
+        return m4.multiply(m4.scaling(sx, sy, sz), m);
     },
 
-    multiply2: function(a, b) {
+    multiply: function(a, b) {
         if (a.length !== b.length) {
             throw new Error("Matrices lengths are not equal");
         }
@@ -104,7 +125,7 @@ export const m4 = {
         return resultMatrix;
     },
 
-    multiply: function(a, b) {
+    multiply2: function(a, b) {
         let a00 = a[0 * 4 + 0];
         let a01 = a[0 * 4 + 1];
         let a02 = a[0 * 4 + 2];

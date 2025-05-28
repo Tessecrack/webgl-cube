@@ -11,5 +11,7 @@ export class UserInput {
         this.scalingX = 1;
         this.scalingY = 1;
         this.scalingZ = 1;
+
+        this.fieldOfView = 0;
     }
 }

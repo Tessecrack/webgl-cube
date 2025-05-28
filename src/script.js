@@ -39,6 +39,9 @@ function main() {
     const sliderScalingY = document.getElementById("input-range-scaling-y");
     const sliderScalingZ = document.getElementById("input-range-scaling-z");
 
+    const sliderFieldOfView = document.getElementById("input-range-field-of-view");
+    const spanFieldOfView = document.getElementById("input-range-field-of-view-value");
+
     sliderScalingX.value = 1;
     sliderScalingY.value = 1;
     sliderScalingZ.value = 1;
@@ -50,13 +53,13 @@ function main() {
     spanScaleX.textContent = "1";
     spanScaleY.textContent = "1";
     spanScaleZ.textContent = "1";
-
+/*
     sliderTranslationX.min = 0;
     sliderTranslationX.max = webGlContext.canvas.width;
 
     sliderTranslationY.min = 0;
     sliderTranslationY.max = webGlContext.canvas.height;
-
+*/
 
     sliderTranslationX.addEventListener("input", (e) => {
         const number = Number(e.target.value);
@@ -112,6 +115,13 @@ function main() {
         const number = Number(e.target.value);
         spanScaleZ.textContent = e.target.value;
         userInput.scalingZ = number;
+        glEngine.render();
+    });
+
+    sliderFieldOfView.addEventListener("input", (e) => {
+        const number = Number(e.target.value);
+        spanFieldOfView.textContent = e.target.value;
+        userInput.fieldOfView = number;
         glEngine.render();
     });
 

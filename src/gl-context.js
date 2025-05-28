@@ -15,6 +15,10 @@ export class GLContext {
         this._glContext.uniformMatrix4fv(uniformLocation, false, matrix4f);
     }
 
+    setUniformValue1f(uniformLocation, value) {
+        this._glContext.uniform1f(uniformLocation, value);
+    }
+
     createVertexShader(src) {
         return this._createShader(this._glContext.VERTEX_SHADER, src);
     }

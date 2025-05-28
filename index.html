@@ -79,17 +79,17 @@
 <div id="sidebar">
     <div class="control-group">
         <label for="input-range-x">Translation X</label>
-        <input type="range" id="input-range-x" min="0" max="50" value="0">
+        <input type="range" id="input-range-x" min="-100" max="100" value="0">
         <span id="input-range-value-x">0</span>
     </div>
     <div class="control-group">
         <label for="input-range-y">Translation Y</label>
-        <input type="range" id="input-range-y" min="0" max="50" value="0">
+        <input type="range" id="input-range-y" min="-100" max="100" value="0">
         <span id="input-range-value-y">0</span>
     </div>
     <div class="control-group">
         <label for="input-range-z">Translation Z</label>
-        <input type="range" id="input-range-z" min="0" max="50" value="0">
+        <input type="range" id="input-range-z" min="-1000" max="500" value="0">
         <span id="input-range-value-z">0</span>
     </div>
 
@@ -123,6 +123,12 @@
         <label for="input-range-scaling-z">Scaling Z</label>
         <input type="range" id="input-range-scaling-z" step="0.1" min="-5" max="5" value="1">
         <span id="input-range-scaling-value-z">0</span>
+    </div>
+
+    <div class="control-group">
+        <label for="input-range-field-of-view">Field of view</label>
+        <input type="range" id="input-range-field-of-view" step="1" min="1" max="180" value="1">
+        <span id="input-range-field-of-view-value">0</span>
     </div>
 </div>
 <script type="module" src="src/script.js"></script>
