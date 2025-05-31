@@ -17,9 +17,18 @@ export function getRectangleVerticesColors(x, y, width, height) {
 }
 
 export function getCubeArray(width, height, depth) {
-    const x1 = 0;
-    const y1 = 0;
-    const z1 = 0;
+
+    const alignCenterOffsetX = -width / 2;
+    const alignCenterOffsetY = -height / 2;
+    const alignCenterOffsetZ = -depth / 2;
+
+    //const alignCenterOffsetX = 0;
+    //const alignCenterOffsetY = 0;
+    //const alignCenterOffsetZ = 0;
+
+    const x1 = alignCenterOffsetX;
+    const y1 = alignCenterOffsetY;
+    const z1 = alignCenterOffsetZ;
 
     const x2 = x1 + width;
     const y2 = y1 + height;

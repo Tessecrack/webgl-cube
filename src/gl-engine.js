@@ -14,6 +14,23 @@ export class GLEngine {
         this._glContext.clearViewport();
         this._glContext.enableCullFace();
         this._glContext.enableDepthTest();
+
+        
+        const aspect = this._glContext.getCanvasWidth() / this._glContext.getCanvasHeight();
+        const zNear = 1;
+        const zFar = 2000;
+        const fieldOfViewRadians = this._userInput.fieldOfView * Math.PI / 180;
+
+        let projectionMatrix = m4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
+
+        const cameraAngleRadians = this._userInput.cameraAngle * Math.PI / 180;
+        const radius = 200;
+
+        let cameraMatrix = m4.yRotation(cameraAngleRadians);
+        cameraMatrix = m4.translate(cameraMatrix, 0, 0, radius * 1.5);
+        const viewMatrix = m4.inverse(cameraMatrix);
+        projectionMatrix = m4.multiply(viewMatrix, projectionMatrix);
+
         for (let i = 0; i < this._objects.length; ++i) {
             const object = this._objects[i];
             const attribVertexLocation = object.attribVertexLocation;
@@ -29,25 +46,20 @@ export class GLEngine {
             const angleRadiansY = this._userInput.rotationY * Math.PI / 180;
             const angleRadiansZ = this._userInput.rotationZ * Math.PI / 180;
 
-            const aspect = this._glContext.getCanvasWidth() / this._glContext.getCanvasHeight();
-            const zNear = 1;
-            const zFar = 2000;
-            const fieldOfViewRadians = this._userInput.fieldOfView * Math.PI / 180;
+            const angle = i * Math.PI * 2 / this._objects.length;
+            const x = Math.cos(angle) * radius;
+            const z = Math.sin(angle) * radius
 
-
-            let matrix = m4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
-            //matrix = m4.multiply2(matrix, m4.projection(this._glContext.getCanvasWidth(), this._glContext.getCanvasHeight(), 500));
-
-            matrix = m4.translate(matrix,
-                this._userInput.translationX,
+            let objectProjectionMatrix = m4.translate(projectionMatrix,
+                this._userInput.translationX + x,
                 this._userInput.translationY,
-                this._userInput.translationZ);
+                this._userInput.translationZ + z);
 
-            matrix = m4.rotateX(matrix, angleRadiansX);
-            matrix = m4.rotateY(matrix, angleRadiansY);
-            matrix = m4.rotateZ(matrix, angleRadiansZ);
+            objectProjectionMatrix = m4.rotateX(objectProjectionMatrix, angleRadiansX);
+            objectProjectionMatrix = m4.rotateY(objectProjectionMatrix, angleRadiansY);
+            objectProjectionMatrix = m4.rotateZ(objectProjectionMatrix, angleRadiansZ);
 
-            matrix = m4.scale(matrix,
+            objectProjectionMatrix = m4.scale(objectProjectionMatrix,
                 this._userInput.scalingX,
                 this._userInput.scalingY,
                 this._userInput.scalingZ);
@@ -64,7 +76,7 @@ export class GLEngine {
             this._glContext.vertexAttribPointer(attribVertexLocation, 3,  false, 7 * 4, 0);
             this._glContext.vertexAttribPointer(attribColorLocation, 4, false, 7 * 4, 3 * 4);
 
-            this._glContext.setUniformValueMatrix4f(uniformMatrixLocation, matrix);
+            this._glContext.setUniformValueMatrix4f(uniformMatrixLocation, objectProjectionMatrix);
 
             this._glContext.drawArrays(0, countVertices);
         }

@@ -78,6 +78,11 @@
 
 <div id="sidebar">
     <div class="control-group">
+        <label for="input-range-camera-angle">Camera angle</label>
+        <input type="range" id="input-range-camera-angle" min="-360" max="360" value="0">
+        <span id="input-range-camera-angle-value">0</span>
+    </div>
+    <div class="control-group">
         <label for="input-range-x">Translation X</label>
         <input type="range" id="input-range-x" min="-100" max="100" value="0">
         <span id="input-range-value-x">0</span>
@@ -89,7 +94,7 @@
     </div>
     <div class="control-group">
         <label for="input-range-z">Translation Z</label>
-        <input type="range" id="input-range-z" min="-1000" max="500" value="0">
+        <input type="range" id="input-range-z" min="-1000" max="500" value="-420">
         <span id="input-range-value-z">0</span>
     </div>
 
@@ -127,7 +132,7 @@
 
     <div class="control-group">
         <label for="input-range-field-of-view">Field of view</label>
-        <input type="range" id="input-range-field-of-view" step="1" min="1" max="180" value="1">
+        <input type="range" id="input-range-field-of-view" step="1" min="1" max="180" value="60">
         <span id="input-range-field-of-view-value">0</span>
     </div>
 </div>

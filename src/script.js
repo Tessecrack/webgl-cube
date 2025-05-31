@@ -53,6 +53,11 @@ function main() {
     spanScaleX.textContent = "1";
     spanScaleY.textContent = "1";
     spanScaleZ.textContent = "1";
+
+    const sliderCameraAngle = document.getElementById("input-range-camera-angle");
+    const spanCameraAngle = document.getElementById("input-range-camera-angle-value");
+
+    spanCameraAngle.textContent = 0
 /*
     sliderTranslationX.min = 0;
     sliderTranslationX.max = webGlContext.canvas.width;
@@ -125,8 +130,32 @@ function main() {
         glEngine.render();
     });
 
-    const verticesColors = getCubeArray(100, 100, 100);
-    glEngine.createObject(verticesColors, 36);
+    sliderCameraAngle.addEventListener("input", (e) => {
+        const number = Number(e.target.value);
+        spanCameraAngle.textContent = e.target.value;
+        userInput.cameraAngle = number;
+        glEngine.render();
+    });
+
+    for (let i = 0; i < 5; ++i) {
+        const verticesColors = getCubeArray(100, 100, 100);
+        glEngine.createObject(verticesColors, 36);
+    }
+
+    userInput.cameraAngle = 0;
+    
+    userInput.fieldOfView = 60;
+
+    userInput.translationX = -100;
+    userInput.translationY = -100;
+    userInput.translationZ = -430;
+
+    userInput.rotationX = 0;
+    userInput.rotationY = 0;
+    userInput.rotationZ = 0;
+
+
+
     glEngine.render();
 }
 
