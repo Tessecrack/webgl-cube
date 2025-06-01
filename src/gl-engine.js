@@ -2,6 +2,7 @@ import { GLObject } from "./gl-object.js";
 import {getFragmentShaderSrc, getVertexShaderSrc} from "./utils/webgl-utils.js";
 import { m4 } from "./utils/math-utils.js";
 
+
 export class GLEngine {
     constructor(GLContext, UserInput) {
         this._glContext = GLContext;
@@ -22,12 +23,24 @@ export class GLEngine {
         const fieldOfViewRadians = this._userInput.fieldOfView * Math.PI / 180;
 
         let projectionMatrix = m4.perspective(fieldOfViewRadians, aspect, zNear, zFar);
+        
+        const cameraAngleXRadians = this._userInput.cameraAngleX * Math.PI / 180;
+        const cameraAngleYRadians = this._userInput.cameraAngleY * Math.PI / 180;
 
-        const cameraAngleRadians = this._userInput.cameraAngle * Math.PI / 180;
         const radius = 200;
 
-        let cameraMatrix = m4.yRotation(cameraAngleRadians);
+        const firstCubePosition = [this._userInput.translationX, this._userInput.translationY, 0];
+        
+        let cameraMatrix = m4.yRotation(cameraAngleYRadians);
+        cameraMatrix = m4.rotateX(cameraMatrix, cameraAngleXRadians);
         cameraMatrix = m4.translate(cameraMatrix, 0, 0, radius * 1.5);
+        
+        const cameraPosition = [
+            cameraMatrix[12], cameraMatrix[13], cameraMatrix[14]
+        ];
+        const up = [0, 1, 0];
+
+        cameraMatrix = m4.lookAt(cameraPosition, firstCubePosition, up);
         const viewMatrix = m4.inverse(cameraMatrix);
         projectionMatrix = m4.multiply(viewMatrix, projectionMatrix);
 

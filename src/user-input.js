@@ -13,6 +13,8 @@ export class UserInput {
         this.scalingZ = 1;
 
         this.fieldOfView = 0;
-        this.cameraAngle = 0;
+
+        this.cameraAngleX = 0;
+        this.cameraAngleY = 0;
     }
 }

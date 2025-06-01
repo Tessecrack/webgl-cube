@@ -1,4 +1,48 @@
+export const vectors = {
+    cross: function(a, b) {
+        return [
+            a[1] * b[2] - a[2] * b[1],
+            a[2] * b[0] - a[0] * b[2],
+            a[0] * b[1] - a[1] * b[0]
+        ]
+    },
+
+    substractVectors: function(a, b) {
+        return [
+            a[0] - b[0],
+            a[1] - b[1],
+            a[2] - b[2]
+        ]
+    },
+
+    normalize: function(v) {
+        const length = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+        if (length > 0.00001) {
+            return [v[0] / length, v[1] / length, v[2] / length];
+        } else {
+            return [0, 0, 0];
+        }
+    },
+};
+
 export const m4 = {
+    lookAt: function(cameraPosition, target, up) {
+        const zAxis = vectors.normalize(
+        vectors.substractVectors(cameraPosition, target));
+        const xAxis = vectors.normalize(vectors.cross(up, zAxis));
+        const yAxis = vectors.normalize(vectors.cross(zAxis, xAxis));
+ 
+        return [
+            xAxis[0], xAxis[1], xAxis[2], 0,
+            yAxis[0], yAxis[1], yAxis[2], 0,
+            zAxis[0], zAxis[1], zAxis[2], 0,
+            cameraPosition[0],
+            cameraPosition[1],
+            cameraPosition[2],
+            1,
+        ];
+    },
+
     perspective: function(fieldOfViewInRadians, aspect, near, far) {
         const f = Math.tan(Math.PI * 0.5 - 0.5 * fieldOfViewInRadians);
         const rangeInv = 1.0 / (near - far);
