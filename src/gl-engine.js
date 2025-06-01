@@ -7,16 +7,19 @@ export class GLEngine {
     constructor(GLContext, UserInput) {
         this._glContext = GLContext;
         this._userInput = UserInput;
+        this._previousTimeRender = 0;
         this._objects = [];
     }
 
-    render() {
+    render(tick) {
         this._glContext.resize();
         this._glContext.clearViewport();
         this._glContext.enableCullFace();
         this._glContext.enableDepthTest();
-
         
+        const nowTime = tick * 0.001;
+        const deltaTime = nowTime - this._previousTimeRender;
+        this._previousTimeRender = nowTime;
         const aspect = this._glContext.getCanvasWidth() / this._glContext.getCanvasHeight();
         const zNear = 1;
         const zFar = 2000;
@@ -29,7 +32,7 @@ export class GLEngine {
 
         const radius = 200;
 
-        const firstCubePosition = [this._userInput.translationX, this._userInput.translationY, 0];
+        const pointCameraView = [this._userInput.translationX, this._userInput.translationY, 0];
         
         let cameraMatrix = m4.yRotation(cameraAngleYRadians);
         cameraMatrix = m4.rotateX(cameraMatrix, cameraAngleXRadians);
@@ -40,10 +43,10 @@ export class GLEngine {
         ];
         const up = [0, 1, 0];
 
-        cameraMatrix = m4.lookAt(cameraPosition, firstCubePosition, up);
+        cameraMatrix = m4.lookAt(cameraPosition, pointCameraView, up);
         const viewMatrix = m4.inverse(cameraMatrix);
         projectionMatrix = m4.multiply(viewMatrix, projectionMatrix);
-
+        const rotationSpeed = 1.2;
         for (let i = 0; i < this._objects.length; ++i) {
             const object = this._objects[i];
             const attribVertexLocation = object.attribVertexLocation;
@@ -54,19 +57,36 @@ export class GLEngine {
             const countVertices = object.countVertices;
             const program = object.program;
             const buffer = object.buffer;
-
-            const angleRadiansX = this._userInput.rotationX * Math.PI / 180;
-            const angleRadiansY = this._userInput.rotationY * Math.PI / 180;
-            const angleRadiansZ = this._userInput.rotationZ * Math.PI / 180;
-
+            
             const angle = i * Math.PI * 2 / this._objects.length;
             const x = Math.cos(angle) * radius;
-            const z = Math.sin(angle) * radius
+            const z = Math.sin(angle) * radius;
+
+            let angleRadiansX = this._userInput.rotationX * Math.PI / 180;
+            let angleRadiansY = this._userInput.rotationY * Math.PI / 180;
+            let angleRadiansZ = this._userInput.rotationZ * Math.PI / 180;
+
+            let translationX = this._userInput.translationX + x;
+            let translationY = this._userInput.translationY;
+            let translationZ = this._userInput.translationZ + z;
+
+            if (object.isAnimate) {
+                object.rotationValueX += rotationSpeed * deltaTime;
+                angleRadiansX = object.rotationValueX;
+            }
+
+            if (object.isPlane) {
+                angleRadiansX = -Math.PI / 2;
+                angleRadiansY = 0;
+                angleRadiansZ = 0;
+
+                translationY = -100;
+            }
 
             let objectProjectionMatrix = m4.translate(projectionMatrix,
-                this._userInput.translationX + x,
-                this._userInput.translationY,
-                this._userInput.translationZ + z);
+                translationX,
+                translationY,
+                translationZ);
 
             objectProjectionMatrix = m4.rotateX(objectProjectionMatrix, angleRadiansX);
             objectProjectionMatrix = m4.rotateY(objectProjectionMatrix, angleRadiansY);
@@ -93,9 +113,23 @@ export class GLEngine {
 
             this._glContext.drawArrays(0, countVertices);
         }
+
+        requestAnimationFrame(this.render.bind(this));
     }
 
     createObject(arrayVerticesColors, countVertices) {
+        this._createAndAddObject(arrayVerticesColors, countVertices, false, false);
+    }
+
+    createAnimatedObject(arrayVerticesColors, countVertices) {
+        this._createAndAddObject(arrayVerticesColors, countVertices, true, false);
+    }
+
+    createPlaneObject(arrayVerticesColors, countVertices) {
+        this._createAndAddObject(arrayVerticesColors, countVertices, false, true);
+    }
+
+    _createAndAddObject(arrayVerticesColors, countVertices, isAnimate, isPlane) {
         const vertexShaderSrc = getVertexShaderSrc();
         const fragmentShaderSrc = getFragmentShaderSrc();
 
@@ -114,7 +148,7 @@ export class GLEngine {
         const fudgeFactorUniformLocation = this._glContext.getUniformLocation(program, "u_fudgeFactor");
 
         const glObject = new GLObject(program, buffer, matrixUniformLocation, fudgeFactorUniformLocation,
-            vertexPositionAttribLocation, colorAttribLocation, countVertices);
+            vertexPositionAttribLocation, colorAttribLocation, countVertices, isAnimate, isPlane);
 
         this._objects.push(glObject);
     }
